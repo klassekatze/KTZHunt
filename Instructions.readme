@@ -1,0 +1,72 @@
+﻿R e a d m e
+-----------
+
+All-in-one radar, speed match, fixed aimbot, ammo pull, and grinder non-tech auto-ejection program
+
+There are a number of documented settings in CustomData.
+
+////RADAR INFO
+Writes to an LCD with the keyword radarLog in the Custom Data. Writes color-tagged raw text that can be used by hudlcd, as well as color text sprites.
+Will display aimbot diagnostic if applicable.
+
+A block group named
+subtargeter
+--can be used to forcibly set the subtargeting to draw from specific weapons. You can use this to display the subtarget of a specific turreted weapon on your HUD.
+Be aware the actual aimbot functions will then depend on that weapon if you're using those. (Though presumably if you have a turreted rail or the like you are not)
+
+////AMMO PULL
+WC weapons tend to only pull one ammo item on their own. This stuffs them completely full, be they PDCs, railgun, torpedo launchers, etc.
+
+////GRINDER EJECT: For NPC tech hunting. Disables vanilla conveyor on grinders. Items are moved out of grinders by the script,
+with scrap, ammo, etc going to cargo containers with names containing keyword Loot. Most other materials are instead sent to connectors and ejected into space.
+Ejection is by whitelists - unknown items are never ejected.
+
+////SPEEDMATCH INFO
+thrust logic code from Whip's Speed Matcher Script https://steamcommunity.com/sharedfiles/filedetails/?id=1109204252
+Adapted for straightforward use with WeaponCore rather than camera raycasts.
+This program does thrust overrides. It does not turn thrusters on/off.
+Player WASD/whatever control is *not* blocked, Whip's logic accounts for it, so you can adjust your position freely with your controls while otherwise dampening to match your target.
+COMMAND ARGUMENTS ARE AS FOLLOWS:
+    matchclosest
+        Will speed dampen relative to the closest entity detected by weaponcore weapon(s). This will generally need to be an enemy, or at least owned by somebody else.
+    matchfocus
+        Will speed dampen relative to the entity being explicitly targeted by your ship, as in has a big reticle and you're getting stats on it on top of the screen.
+
+STATE LIGHTING
+    Light blocks in the block group named "indicators" will turn blue when there is an active speed match, and green when normal behavior is in effect.
+////SPEEDMATCH INFO END
+
+////AIMBOT INFO
+Create a block group named--
+fixedbot
+--containing the fixed weapons - railgun(s), presumably - you want this script to automate. It will use the first available weapon that is ready to fire at a given time.
+
+Any attempt to rotate the ship by the player will always override the aimbot gyro control;
+conversely, in the absence of player input the script will enable gyro lock to stop any detected angular momentum.
+
+Optionally, name an LCD block fixlcd for some diagnostic output. If radarLog is present, diagnostics will show up there in any case.
+
+Script command argument:
+aimbot
+ - Toggles the aimbot.
+
+Subsystem-targeting fixed weapon aimbot. Requires and assumes a ammunition loaded, subsystem-targeting-capable weapon to pull targeting data from.
+In Draconis Expanse, a Tycho launcher works well. To reiterate, the launcher *must* be loaded with a torpedo--
+ WeaponCore will *not* actually lock onto subsystems with a weapon if that weapon is not loaded.
+
+If the appropriate configured launcher(s) is present, and the fixedbot block group contains a valid fixed weapon,
+the script  will automatically rotate the ship to align the weapon with the targetted subsystem. Once the track error is less than 2 meters for at least 0.05s, the weapon will fire.
+
+Some notes here - the fixed Zako has a shot deviation in degrees of 0.08, and the T-47, 0.06. This script in testing is usually < 0.08 degrees deviation.
+However, at many kilometers even small deviations can result in many meters off target - for example, 0.058 deviation is 6.1 meters off target if the target is 5.6km away.
+
+Be aware: Mounted/turret railguns will always have a qualitative advantage.
+As long as barrel deviation is less than the distance they can rotate in a single tick, the barrel will always have perfect alignment.
+There is still shot deviation, but there is *only* shot deviation, whereas with a script or CTC, the weapon suffers from shot deviation *and* barrel deviation.
+
+For this reason, it is always better to use turreted railguns unless the goal is specifically cost or style.
+////AIMBOT INFO END
+
+//ERRATA COMMANDS
+turnonall
+    - turns on all functional blocks in the grid
